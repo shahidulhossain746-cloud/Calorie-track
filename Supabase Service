@@ -1,0 +1,41 @@
+// src/services/plan.service.ts
+import { supabase } from './supabase';
+
+export interface Plan {
+  id?: string;
+  name: string;
+  description?: string;
+  price: number;
+  currency?: string;
+  billing_interval: 'month' | 'year';
+}
+
+export async function createPlan(plan: Plan) {
+  const { data, error } = await supabase.from('plans').insert([plan]).select();
+  if (error) throw error;
+  return data[0];
+}
+
+export async function getPlans() {
+  const { data, error } = await supabase.from('plans').select('*');
+  if (error) throw error;
+  return data;
+}
+
+export async function getPlan(id: string) {
+  const { data, error } = await supabase.from('plans').select('*').eq('id', id).single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updatePlan(id: string, updates: Partial<Plan>) {
+  const { data, error } = await supabase.from('plans').update(updates).eq('id', id).select();
+  if (error) throw error;
+  return data[0];
+}
+
+export async function deletePlan(id: string) {
+  const { error } = await supabase.from('plans').delete().eq('id', id);
+  if (error) throw error;
+  return true;
+}
