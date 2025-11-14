@@ -1,0 +1,61 @@
+// src/routes/plan.routes.ts
+import express from 'express';
+import { createPlan, getPlans, getPlan, updatePlan, deletePlan } from '../services/plan.service';
+import { requireAdmin } from '../middlewares/auth';
+
+const router = express.Router();
+
+// Middleware: only admins
+router.use(requireAdmin);
+
+// Create a plan
+router.post('/', async (req, res) => {
+  try {
+    const plan = await createPlan(req.body);
+    res.json(plan);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// List all plans
+router.get('/', async (_, res) => {
+  try {
+    const plans = await getPlans();
+    res.json(plans);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Get a single plan
+router.get('/:id', async (req, res) => {
+  try {
+    const plan = await getPlan(req.params.id);
+    res.json(plan);
+  } catch (err: any) {
+    res.status(404).json({ error: err.message });
+  }
+});
+
+// Update a plan
+router.put('/:id', async (req, res) => {
+  try {
+    const plan = await updatePlan(req.params.id, req.body);
+    res.json(plan);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Delete a plan
+router.delete('/:id', async (req, res) => {
+  try {
+    await deletePlan(req.params.id);
+    res.json({ success: true });
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+export default router;
