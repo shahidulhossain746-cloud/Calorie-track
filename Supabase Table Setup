@@ -1,0 +1,10 @@
+create table plans (
+  id uuid default gen_random_uuid() primary key,
+  name text not null,
+  description text,
+  price numeric not null,
+  currency text not null default 'USD',
+  billing_interval text not null default 'month', -- month/year
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
