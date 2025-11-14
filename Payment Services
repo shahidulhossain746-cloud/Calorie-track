@@ -1,0 +1,13 @@
+// src/services/stripe.ts
+import Stripe from 'stripe';
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2022-11-15' });
+
+export async function createStripeSession(planId: string, customerEmail: string) {
+  return await stripe.checkout.sessions.create({
+    mode: 'subscription',
+    line_items: [{ price: planId, quantity: 1 }],
+    success_url: `${process.env.APP_BASE_URL}/payments/success`,
+    cancel_url: `${process.env.APP_BASE_URL}/payments/cancel`,
+    customer_email: customerEmail
+  });
+}
